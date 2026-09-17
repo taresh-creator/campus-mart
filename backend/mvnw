@@ -1,0 +1,20 @@
+#!/bin/sh
+# ----------------------------------------------------------------------------
+# Maven Start Up Shell Script
+# ----------------------------------------------------------------------------
+set -e
+
+MAVEN_VERSION="3.9.9"
+MAVEN_USER_HOME="$HOME/.m2"
+MAVEN_DIR="$MAVEN_USER_HOME/wrapper/dists/apache-maven-$MAVEN_VERSION"
+
+if [ ! -f "$MAVEN_DIR/bin/mvn" ]; then
+    echo "Downloading Maven $MAVEN_VERSION..."
+    mkdir -p "$MAVEN_USER_HOME/wrapper/dists"
+    TMP_ZIP="/tmp/apache-maven-$MAVEN_VERSION-bin.zip"
+    curl -fsSL "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/$MAVEN_VERSION/apache-maven-$MAVEN_VERSION-bin.zip" -o "$TMP_ZIP"
+    unzip -q -o "$TMP_ZIP" -d "$MAVEN_USER_HOME/wrapper/dists"
+    rm -f "$TMP_ZIP"
+fi
+
+exec "$MAVEN_DIR/bin/mvn" "$@"
