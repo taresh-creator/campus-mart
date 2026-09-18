@@ -78,7 +78,7 @@ export function ListingCard({ listing, onClick }: ListingCardProps) {
         </div>
 
         <p className="text-2xl font-bold text-slate-900 mb-3">
-          ${Number(listing.price).toFixed(2)}
+          Rs {Number(listing.price).toFixed(2)}
         </p>
 
         <div className="mt-auto flex items-center justify-between text-xs text-slate-500">

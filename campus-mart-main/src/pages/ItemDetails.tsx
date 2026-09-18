@@ -117,7 +117,7 @@ export function ItemDetails({ listingId, onNavigate }: ItemDetailsProps) {
           </h1>
 
           <p className="text-3xl font-bold text-emerald-600 mb-1">
-            ${Number(listing.price).toFixed(2)}
+            Rs {Number(listing.price).toFixed(2)}
           </p>
           <p className="text-sm text-slate-500 mb-6">
             {listing.price_type === 'Negotiable'
