@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import type { Category, Condition, PriceType, Listing } from '@/types/supabase';
 import { CATEGORIES, CONDITIONS, PRICE_TYPES } from '@/types/supabase';
+import { apiRequest } from '@/lib/api';
 import {
   ArrowLeft,
   ImageUp,
@@ -141,11 +142,13 @@ export function SellForm({ onNavigate, editingListing }: SellFormProps) {
         if (error) throw new Error(error.message);
         onNavigate('my-listings');
       } else {
-        const { error } = await supabase.from('listings').insert(payload);
+  await apiRequest('/listings', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
 
-        if (error) throw new Error(error.message);
-        onNavigate('marketplace');
-      }
+  onNavigate('marketplace');
+}
     } catch (err) {
       setSubmitError(
         err instanceof Error ? err.message : 'Something went wrong.'

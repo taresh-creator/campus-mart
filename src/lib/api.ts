@@ -1,4 +1,10 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+import type { Profile } from '@/types/supabase';
+
+const API_URL =
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8080/api'
+    : 'https://campus-mart-zrni.onrender.com/api';
 
 export async function apiRequest<T>(
   endpoint: string,
@@ -23,3 +29,85 @@ export async function apiRequest<T>(
 
   return data;
 }
+
+export const api = {
+  auth: {
+    getToken(): string | null {
+      return localStorage.getItem('token');
+    },
+
+    getStoredUser(): Profile | null {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    },
+
+    async getMe(): Promise<Profile | null> {
+      try {
+        return await apiRequest<Profile>('/auth/me');
+      } catch {
+        return null;
+      }
+    },
+
+    async signUp(
+      fullName: string,
+      email: string,
+      password: string
+    ): Promise<{ user?: Profile; token?: string; error?: string }> {
+      try {
+        const data = await apiRequest<{
+          token: string;
+          user: Profile;
+        }>('/auth/signup', {
+          method: 'POST',
+          body: JSON.stringify({
+            fullName,
+            email,
+            password,
+          }),
+        });
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        return data;
+      } catch (error) {
+        return {
+          error: error instanceof Error ? error.message : 'Signup failed',
+        };
+      }
+    },
+
+    async signIn(
+      email: string,
+      password: string
+    ): Promise<{ user?: Profile; token?: string; error?: string }> {
+      try {
+        const data = await apiRequest<{
+          token: string;
+          user: Profile;
+        }>('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        });
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        return data;
+      } catch (error) {
+        return {
+          error: error instanceof Error ? error.message : 'Login failed',
+        };
+      }
+    },
+
+    signOut(): void {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    },
+  },
+};
